@@ -11,12 +11,14 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Schemas\Schema;
+use App\Filament\Resources\ProductResource\Pages;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = \App\Models\Product::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Products';
 
     public static function form(Schema $form): Schema
     {
@@ -41,10 +43,11 @@ class ProductResource extends Resource
 
     public static function getPages(): array
     {
+        // 'Pages' ora non è più rosso perché l'abbiamo importato sopra
         return [
-            'index' => ListRecords::route('/'),
-            'create' => CreateRecord::route('/create'),
-            'edit' => EditRecord::route('/{record}/edit'),
+            'index' => Pages\ListProducts::route('/'),
+            'create' => Pages\CreateProduct::route('/create'),
+            'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
 }
