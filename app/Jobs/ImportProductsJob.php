@@ -23,18 +23,20 @@ class ImportProductsJob implements ShouldQueue
 
     public function handle()
     {
-        $product = Product::create([
-            'name' => $this->productData['name'] ?? 'N/A',
-            'sku' => $this->productData['sku'] ?? null,
-            'price' => $this->productData['price'] ?? 0,
-            'description' => $this->productData['description'] ?? null,
-            'category' => $this->productData['category'] ?? null
-        ]);
+        $product = Product::updateOrCreate(
+            ['sku' => $this->productData['sku']],
+            [
+                'name'        => $this->productData['name'],
+                'price'       => $this->productData['price'] ?? 0,
+                'description' => $this->productData['description'] ?? null,
+                'category'    => $this->productData['category'] ?? null,
+            ]
+        );
 
         if (!empty($this->productData['image_url'])) {
-            $product->images()->create([
-                'url' => $this->productData['image_url']
-            ]);
+            $product->images()->updateOrCreate(
+                ['url' => $this->productData['image_url']]
+            );
         }
     }
 }

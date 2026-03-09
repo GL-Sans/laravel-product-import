@@ -4,10 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Models\Product;
 use Filament\Resources\Resource;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Schemas\Schema;
@@ -15,7 +13,7 @@ use App\Filament\Resources\ProductResource\Pages;
 
 class ProductResource extends Resource
 {
-    protected static ?string $model = \App\Models\Product::class;
+    protected static ?string $model = Product::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Products';
@@ -24,9 +22,12 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required(),
+                TextInput::make('name')->required()->columnSpanFull(),
                 TextInput::make('sku')->required(),
-                TextInput::make('price')->required(),
+                TextInput::make('price')->numeric()->required(),
+                TextInput::make('category'),
+                TextInput::make('source_url')->url()->columnSpanFull(),
+                Textarea::make('description')->columnSpanFull(),
             ]);
     }
 
@@ -34,20 +35,20 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title'),
-                TextColumn::make('sku'),
-                TextColumn::make('price'),
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('sku')->searchable(),
+                TextColumn::make('price')->money('EUR')->sortable(),
+                TextColumn::make('category')->searchable(),
             ])
             ->filters([]);
     }
 
     public static function getPages(): array
     {
-        // 'Pages' ora non è più rosso perché l'abbiamo importato sopra
         return [
-            'index' => Pages\ListProducts::route('/'),
+            'index'  => Pages\ListProducts::route('/'),
             'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'edit'   => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
 }
